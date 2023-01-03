@@ -1,0 +1,72 @@
+﻿<button class="btn btn-primary" onclick="getCallGreetSync()">callGreet(GET同步)</button>
+<button class="btn btn-primary" onclick="getCallGreetASync()">callGreet(GET非同步)</button>
+<button class="btn btn-primary" onclick="postCallGreetASync()">callGreet(POST非同步)</button>
+<img id="progress" src="~/images/ghost.gif" asp-append-version="true" style="display:none" />
+<div id="result"></div>
+
+@section Scripts
+	{
+	<script>
+		function getCallGreetSync() {
+			var xmlHttp = new XMLHttpRequest();
+			if (xmlHttp != null) {
+				var p = encodeURI("name=陳小明");
+				xmlHttp.open("GET", "https://localhost:7093/Ajax/Greet?" + p, false);
+				document.getElementById("progress").style.display = "inline";
+				xmlHttp.send();
+				document.getElementById("result").innerText = decodeURI(xmlHttp.responseText);
+				document.getElementById("progress").style.display = "none";
+			}
+			else {
+				alert("瀏覽器不支援XMLHttpRequest")
+			}
+		}
+		function getCallGreetASync() {
+			var xmlHttp = new XMLHttpRequest();
+			if (xmlHttp != null) {
+				var p = encodeURI("name=李小明");
+				xmlHttp.open("GET", "https://localhost:7093/Ajax/Greet?" + p, true);
+				xmlHttp.onreadystatechange = function () {
+					if (xmlHttp.readyState == 4) {
+						if (xmlHttp.status == 200){
+							document.getElementById("result").innerText = decodeURI(xmlHttp.responseText);
+							document.getElementById("progress").style.display = "none";
+						}
+					}
+				}
+
+
+				document.getElementById("progress").style.display = "inline";
+				xmlHttp.send();
+
+
+			}
+			else {
+				alert("瀏覽器不支援XMLHttpRequest")
+			}
+		}
+		function postCallGreetASync() {
+			var xmlHttp = new XMLHttpRequest();
+			if (xmlHttp != null) {
+				xmlHttp.open("POST", "https://localhost:7093/Ajax/Greet", true);
+				xmlHttp.onreadystatechange = function () {
+					if (xmlHttp.readyState == 4) {
+						if (xmlHttp.status == 200){
+							document.getElementById("result").innerText = xmlHttp.responseText	;
+							document.getElementById("progress").style.display = "none";
+						}
+					}
+				}
+
+				xmlHttp.setRequestHeader("content-type","application/x-www-form-urlencoded")
+				document.getElementById("progress").style.display = "inline";
+				xmlHttp.send("name=郭台明");
+
+
+			}
+			else {
+				alert("瀏覽器不支援XMLHttpRequest")
+			}
+		}
+	</script>
+}

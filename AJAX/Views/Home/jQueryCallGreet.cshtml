@@ -1,0 +1,43 @@
+﻿<button class="btn btn-success" onclick="jQueryCallGreetSync()">jQueryCallGreet(GET同步)</button>
+<button class="btn btn-success" onclick="jQueryCallGreetASync()">jQueryCallGreet(GET非同步)</button>
+<button class="btn btn-success" onclick="jQueryPostCallGreetASync()">jQueryPostCallGreetASync(POST非同步)</button>
+<img id="progress" src="~/images/ghost.gif" asp-append-version="true" style="display:none" />
+<div id="result"></div>
+
+@section Scripts
+{
+	<script>
+		function jQueryCallGreetSync(){
+			var p = encodeURI("name=陳小明");
+			$("#progress").show();
+			$.ajax({
+				type:"GET",
+				async:false,
+				url:"https://localhost:7093/Ajax/Greet?" + p,
+				timeout:5000
+			}).done(function(data){
+				$("#result").text(data);
+				$("#progress").hide();
+			}).fail(function(err){
+				alert(err.statusText);
+			});
+		}
+		function jQueryCallGreetASync() {
+			var p = encodeURI("name=陳小明");
+			$("#progress").show();
+			$.ajax({
+				type:"GET",
+				url:"https://localhost:7093/Ajax/Greet?" + p,
+				timeout:5000
+			}).done(function(data){
+				$("#result").text(data);
+				$("#progress").hide();
+			}).fail(function(err){
+				alert(err.statusText);
+			});
+		}
+		function jQueryPostCallGreetASync() {
+			alert("jQueryPostCallGreetASync")
+		}
+	</script>
+}
