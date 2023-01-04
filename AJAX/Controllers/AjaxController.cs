@@ -26,6 +26,7 @@ namespace AJAX.Controllers
 		[HttpPost]
 		public string CheckName(string CompanyName) 
 		{
+			Thread.Sleep(1000);
 			bool Exists=_context.Customers.Any(c=>c.CompanyName== CompanyName);
 			return Exists ? "true" : "false";
 		}

@@ -23,12 +23,12 @@
 			});
 		}
 		function jQueryCallGreetASync() {
-			var p = encodeURI("name=陳小明");
+			var p = encodeURI("name=吳小明");
 			$("#progress").show();
 			$.ajax({
 				type:"GET",
 				url:"https://localhost:7093/Ajax/Greet?" + p,
-				timeout:5000
+				
 			}).done(function(data){
 				$("#result").text(data);
 				$("#progress").hide();
@@ -37,7 +37,19 @@
 			});
 		}
 		function jQueryPostCallGreetASync() {
-			alert("jQueryPostCallGreetASync")
+			$("#progress").show();
+			$.ajax({
+				type: "POST",
+				data:{
+					name:"柯小明"
+				},
+				url: "https://localhost:7093/Ajax/Greet" ,
+			}).done(function (data) {
+				$("#result").text(data);
+				$("#progress").hide();
+			}).fail(function (err) {
+				alert(err.statusText);
+			});
 		}
 	</script>
 }
