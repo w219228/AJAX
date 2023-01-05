@@ -18,7 +18,7 @@
 		$("#getEmployeeById").on("click", function(){
 			$.ajax({
 				type:"GET",
-				url: `https://localhost:7183/api/Employees/{$("#employeeid").val()}`
+				url: `https://localhost:7183/api/Employees/${$("#employeeid").val()}`
 			}).done(function(data){
 				alert(JSON.stringify(data));
 			}).fail(function(err){
