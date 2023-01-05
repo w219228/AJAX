@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EmployeeService.Models;
+using EmployeeService.DTOs;
+using Microsoft.AspNetCore.Cors;
 
 namespace EmployeeService.Controllers
 {
+    [EnableCors("AllowAny")]
     [Route("api/[controller]")]
     [ApiController]
     public class EmployeesController : ControllerBase
@@ -22,36 +25,56 @@ namespace EmployeeService.Controllers
 
         // GET: api/Employees
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Employees>>> GetEmployees()
+        public async Task<IEnumerable<EmployeeDTO>> GetEmployees()
         {
-            return await _context.Employees.ToListAsync();
+            return _context.Employees.Select(emp=>new EmployeeDTO
+            {
+                EmployeeId=emp.EmployeeId,
+                FirstName=emp.FirstName,
+				LastName=emp.LastName,
+				Title=emp.Title
+            });
         }
 
         // GET: api/Employees/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Employees>> GetEmployees(int id)
+        public async Task<EmployeeDTO> GetEmployees(int id)
         {
             var employees = await _context.Employees.FindAsync(id);
 
             if (employees == null)
             {
-                return NotFound();
+                return null;
             }
+            EmployeeDTO EmpDTO = new EmployeeDTO
+            {
+                EmployeeId = employees.EmployeeId,
+                FirstName = employees.FirstName,
+                LastName = employees.LastName,
+                Title = employees.Title
+            };
 
-            return employees;
+            return EmpDTO;
         }
 
         // PUT: api/Employees/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployees(int id, Employees employees)
+        public async Task<string> PutEmployees(int id, EmployeeDTO empDTO)
         {
-            if (id != employees.EmployeeId)
+            if (id != empDTO.EmployeeId)
             {
-                return BadRequest();
+                return "欲修改的員工紀錄不正確";
             }
-
-            _context.Entry(employees).State = EntityState.Modified;
+            Employees emp = await _context.Employees.FindAsync(id);
+            if(emp==null)
+            {
+				return "欲修改的員工紀錄不存在";
+			}
+			emp.FirstName = empDTO.FirstName;
+			emp.LastName = empDTO.LastName;
+			emp.Title = empDTO.Title;
+			_context.Entry(emp).State = EntityState.Modified;
 
             try
             {
@@ -61,7 +84,7 @@ namespace EmployeeService.Controllers
             {
                 if (!EmployeesExists(id))
                 {
-                    return NotFound();
+                    return "欲修改的員工不存在";
                 }
                 else
                 {
@@ -69,34 +92,48 @@ namespace EmployeeService.Controllers
                 }
             }
 
-            return NoContent();
+            return "修改成功";
         }
 
-        // POST: api/Employees
+        // POST: api/Employees 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Employees>> PostEmployees(Employees employees)
-        {
-            _context.Employees.Add(employees);
-            await _context.SaveChangesAsync();
+        //[HttpPost]
+        //public async Task<Employees> PostEmployees(Employees employees)
+        //{
+        //    _context.Employees.Add(employees);
+        //    await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEmployees", new { id = employees.EmployeeId }, employees);
-        }
+        //    return employees;
+        //}
 
-        // DELETE: api/Employees/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEmployees(int id)
+		[HttpPost]
+		public async Task<string> PostEmployees(EmployeeDTO empDTO)
+		{
+            Employees emp = new Employees
+            {
+                FirstName = empDTO.FirstName,
+                LastName = empDTO.LastName,
+                Title = empDTO.Title
+            };
+			_context.Employees.Add(emp);
+			await _context.SaveChangesAsync();
+
+			return "新增成功";
+		}
+		// DELETE: api/Employees/5
+		[HttpDelete("{id}")]
+        public async Task<string> DeleteEmployees(int id)
         {
             var employees = await _context.Employees.FindAsync(id);
             if (employees == null)
             {
-                return NotFound();
+                return "查無此員工";
             }
 
             _context.Employees.Remove(employees);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return "刪除成功";
         }
 
         private bool EmployeesExists(int id)

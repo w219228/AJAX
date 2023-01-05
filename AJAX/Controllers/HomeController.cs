@@ -35,6 +35,11 @@ namespace AJAX.Controllers
 		{
 			return View();
 		}
+		public IActionResult EmployeeManage()
+		{
+			return View();
+		}
+		
 
 		public IActionResult Privacy()
 		{
