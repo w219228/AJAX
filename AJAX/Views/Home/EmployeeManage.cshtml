@@ -1,5 +1,11 @@
 ﻿<button id="getEmployees" class="btn btn-primary">GetEmployees</button>
 <button id="getEmployeeById" class="btn btn-primary">GetEmployeesById</button>
+<button id="postEmployee" class="btn btn-primary">PostEmployee</button>
+<button id="putEmployee" class="btn btn-primary">PutEmployee</button>
+<button id="deleteEmployee" class="btn btn-primary">DeleteEmployee</button>
+
+
+
 <input type="text" id="employeeid"/>
 <div id="employees"></div>
 @section Scripts
@@ -25,5 +31,52 @@
 				alert(err.statusText);
 			})
 		});
+		$("#postEmployee").on("click", function () {
+			var emp={
+				"employeeId": 0,
+				"firstName": "User3",
+				"lastName": "test",
+				"title": "Sales"	
+			};
+			
+			$.ajax({
+				type:"POST",
+				url: "https://localhost:7183/api/Employees",
+				data:JSON.stringify(emp),
+				contentType:"application/json"
+			}).done(function(data){
+				alert(data);
+			}).fail(function (err){
+				alert(err.statusText);
+			});
+		});
+		$("#putEmployee").on("click", function () {
+		var emp={
+			"employeeId": 1014,
+			"firstName": "User20232",
+			"lastName": "test2023",
+			"title": "CEO"
+		}
+			$.ajax({
+			type:"PUT",
+			url: "https://localhost:7183/api/Employees/1014",
+			data:JSON.stringify(emp),
+			contentType:"application/json"
+		}).done(function(data){
+			alert(data);
+		}).fail(function(err){
+			alert(err.statusText);
+		});
+	});
+		$("#deleteEmployee").on("click", function () {
+			$.ajax({
+				type: "DELETE",
+				url: "https://localhost:7183/api/Employees/1",
+			}).done(function(data){
+				alert(data);
+			}).fail(function(err){
+				alert(err.status);
+			})
+		})
 	</script>
 }
